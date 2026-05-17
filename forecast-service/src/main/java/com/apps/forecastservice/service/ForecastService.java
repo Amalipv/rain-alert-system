@@ -3,6 +3,7 @@ package com.apps.forecastservice.service;
 import com.apps.forecastservice.WeatherMapAPIClient;
 import com.apps.forecastservice.client.NotificationClient;
 import com.apps.forecastservice.dto.RainAlertDTO;
+import com.apps.forecastservice.kafka.RainAlertProducer;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,15 +14,15 @@ import org.springframework.beans.factory.annotation.Value;
 public class ForecastService {
 
     private final WeatherMapAPIClient forecastAPIClient;
-    private final NotificationClient notificationClient;
+    private final RainAlertProducer rainAlertProducer;
 
     @Value("${weather.api.rain-threshold}")
     private int rainThreshold;
 
     public ForecastService(WeatherMapAPIClient forecastAPIClient,
-                           NotificationClient notificationClient) {
+                           RainAlertProducer rainAlertProducert) {
         this.forecastAPIClient = forecastAPIClient;
-        this.notificationClient = notificationClient;
+        this.rainAlertProducer = rainAlertProducert;
     }
 
     public void checkRainAndNotify() {
@@ -64,8 +65,9 @@ public class ForecastService {
                     .message(message)
                     .build();
 
-            // Send to notification service
-            notificationClient.sendRainAlert(alert);
+            // Publish to Kafka instead of REST call!
+            rainAlertProducer.publishAlert(alert);
+            log.info("Alert published to Kafka!");
 
         } catch (Exception e) {
             log.error("Error checking weather: {}", e.getMessage());

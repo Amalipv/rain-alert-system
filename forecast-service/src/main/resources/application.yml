@@ -4,11 +4,17 @@ server:
 spring:
   application:
     name: forecast-service
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
   instance:
     prefer-ip-address: true
 
@@ -18,7 +24,7 @@ notification:
 
 weather:
   api:
-    key: ${WEATHER_API_KEY}
-    city: ${WEATHER_CITY}
-    hour:  ${WEATHER_HOUR:11}
-    rain-threshold: ${RAIN_THRESHOLD:40}
+    key: "${WEATHER_API_KEY}"
+    city: "${WEATHER_CITY}"
+    hour:  "${WEATHER_HOUR:11}"
+    rain-threshold: "${RAIN_THRESHOLD:40}"
