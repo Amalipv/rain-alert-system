@@ -1,0 +1,7 @@
+POST http://localhost:8084/auth/login
+Content-Type: application/json
+
+{
+  "username": "sakura",
+  "password": "password123"
+}

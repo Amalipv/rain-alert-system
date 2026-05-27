@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # Route to ForecastService
+        - id: forecast-service
+          uri: lb://forecast-service  # lb = load balanced via Eureka!
+          predicates:
+            - Path=/api/v1/forecast/**  # any /forecast request goes here
+
+        # Route to NotificationService
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/v1/notifications/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true

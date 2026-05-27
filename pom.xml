@@ -33,9 +33,11 @@
     </properties>
 
     <modules>
-    <module>forecast-service</module>
+        <module>forecast-service</module>
         <module>notification-service</module>
         <module>ra-eureka-server</module>
+        <module>api-gateway</module>
+        <module>auth-service</module>
     </modules>
 
     <dependencyManagement>

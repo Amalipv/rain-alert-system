@@ -65,3 +65,40 @@ services:
       WEATHER_CITY: ${WEATHER_CITY}
       WEATHER_HOUR: ${WEATHER_HOUR}
       RAIN_THRESHOLD: ${RAIN_THRESHOLD}
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ra-eureka-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://ra-eureka-server:8761/eureka/
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - ra-eureka-server
+      - postgres
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://ra-eureka-server:8761/eureka/
+      JWT_SECRET: ${JWT_SECRET}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/auth_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: vetri
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: vetri
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+volumes:            # ← root level!
+  postgres_data:
