@@ -104,5 +104,5 @@ Content-Type: application/json
   "password": "password123"
 }
 
-# Trigger weather check (use token from login response)
-POST
+# Trigger weather check
+POST http://localhost:8080/api/v1/forecast/check
