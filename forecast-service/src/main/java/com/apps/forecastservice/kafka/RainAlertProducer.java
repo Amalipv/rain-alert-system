@@ -2,11 +2,13 @@ package com.apps.forecastservice.kafka;
 
 import com.apps.forecastservice.dto.RainAlertDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@Profile("kafka")
 public class RainAlertProducer {
 
     private final KafkaTemplate<String, RainAlertDTO> kafkaTemplate;

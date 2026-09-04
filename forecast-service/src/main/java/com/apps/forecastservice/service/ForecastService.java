@@ -6,6 +6,7 @@ import com.apps.forecastservice.dto.RainAlertDTO;
 import com.apps.forecastservice.kafka.RainAlertProducer;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -14,15 +15,19 @@ import org.springframework.beans.factory.annotation.Value;
 public class ForecastService {
 
     private final WeatherMapAPIClient forecastAPIClient;
-    private final RainAlertProducer rainAlertProducer;
+
+    @Autowired(required=false)
+    private RainAlertProducer rainAlertProducer;
+
+    @Autowired(required = false)
+    private  NotificationClient notificationClient;
 
     @Value("${weather.api.rain-threshold}")
     private int rainThreshold;
 
-    public ForecastService(WeatherMapAPIClient forecastAPIClient,
-                           RainAlertProducer rainAlertProducert) {
+    public ForecastService(WeatherMapAPIClient forecastAPIClient) {
         this.forecastAPIClient = forecastAPIClient;
-        this.rainAlertProducer = rainAlertProducert;
+
     }
 
     public void checkRainAndNotify() {
@@ -66,8 +71,17 @@ public class ForecastService {
                     .build();
 
             // Publish to Kafka instead of REST call!
-            rainAlertProducer.publishAlert(alert);
-            log.info("Alert published to Kafka!");
+            if(rainAlertProducer!=null) {
+                rainAlertProducer.publishAlert(alert);
+                log.info("Alert published to Kafka!");
+            }
+            if(notificationClient!=null) {
+                // Send to notification service
+                notificationClient.sendRainAlert(alert);
+                log.info("Weather data sent to Notification Service!");
+            }
+
+
 
         } catch (Exception e) {
             log.error("Error checking weather: {}", e.getMessage());

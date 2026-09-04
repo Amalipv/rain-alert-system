@@ -3,11 +3,13 @@ package com.apps.notificationservice.kafka;
 import com.apps.notificationservice.dto.RainAlertDTO;
 import com.apps.notificationservice.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@Profile("kafka")
 public class RainAlertConsumer {
 
     private final NotificationService notificationService;
